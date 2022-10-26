@@ -1,0 +1,21 @@
+{
+    "name": "theaamgroup/payjunction",
+    "description": "PHP SDK for PayJunction",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "AAM\\PayJunction\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jodi Nichols",
+            "email": "njodi22@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "ext-curl": "*"
+    }
+}
