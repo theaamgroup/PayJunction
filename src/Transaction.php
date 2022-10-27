@@ -1,17 +1,21 @@
 <?php
 
-namespace AAM\Payment;
+namespace AAM\PayJunction;
 
-use AAM\Payment\Api\Client\Rest;
+use AAM\PayJunction\Rest;
 use Exception;
 
-class Card
+class Transaction
 {
     public const STATUSES = ['HOLD', 'CAPTURE', 'VOID'];
+    public const AVS = ['ADDRESS', 'ZIP', 'ADDRESS_AND_ZIP', 'ADDRESS_OR_ZIP', 'BYPASS', 'OFF'];
 
     private $tokenId = '';
     private $status = '';
     private $terminalId = '';
+    private $avs = 'OFF';
+    private $cvv = 'OFF';
+    private $cardCvv = '';
     private $amountBase = 0;
     private $amountShipping = 0;
     private $amountTax = 0; // level 2
@@ -40,10 +44,6 @@ class Card
     private $purchaseOrderNumber = ''; // level 2
     private $note = '';
     private $level3Eligible = false;
-    private $summaryCommodityCode = ''; // level 3
-    private $destinationZip = ''; // level 3
-    private $shipFromZip = ''; // level 3
-    private $items = []; // level 3 (1-99 items)
 
     public function setTokenId(string $tokenId): void
     {
@@ -66,19 +66,49 @@ class Card
         $this->terminalId = $terminalId;
     }
 
+    /**
+     * @param string $avs = ADDRESS | ZIP | ADDRESS_AND_ZIP | ADDRESS_OR_ZIP | BYPASS | OFF
+     * ADDRESS - Decline if address does not match.
+     * ZIP - Decline if zip does not match.
+     * ADDRESS_AND_ZIP - Decline if address and zip don't match.
+     * ADDRESS_OR_ZIP - Decline if address or zip don't match.
+     * BYPASS - Try to match address and zip but do not decline if one does not match.
+     * OFF - Do not run AVS
+     */
+    public function setAvsCheck(string $avs = 'ADDRESS | ZIP | ADDRESS_AND_ZIP | ADDRESS_OR_ZIP | BYPASS | OFF'): void
+    {
+        $avs = strtoupper($avs);
+
+        if (!in_array($avs, self::AVS)) {
+            throw new Exception('AVS must be one of the following: ' . implode(', ', self::AVS));
+        }
+
+        $this->avs = $avs;
+    }
+
+    public function setCvvCheck(bool $cvv): void
+    {
+        $this->cvv = $cvv ? 'ON' : 'OFF';
+    }
+
+    public function setCvv(string $cardCvv): void
+    {
+        $this->cardCvv = $cardCvv;
+    }
+
     public function setAmountBase(float $amountBase): void
     {
-        $this->amountBase = $amountBase;
+        $this->amountBase = Util::round($amountBase);
     }
 
     public function setAmountShipping(float $amountShipping): void
     {
-        $this->amountShipping = $amountShipping;
+        $this->amountShipping = Util::round($amountShipping);
     }
 
     public function setAmountTax(float $amountTax): void
     {
-        $this->amountTax = $amountTax;
+        $this->amountTax = Util::round($amountTax);
     }
 
     public function setBillingFirstName(string $billingFirstName): void
@@ -215,10 +245,9 @@ class Card
 
     public function charge(Rest $rest): Rest
     {
-        $rest->call(
-            'POST',
+        $rest->post(
             'transactions',
-            array_merge(['action' => 'CHARGE'], $this->buildData())
+            array_merge(['action' => 'CHARGE'], $this->getData())
         );
 
         $this->setLevel3Eligible($rest);
@@ -228,10 +257,9 @@ class Card
 
     public function refund(Rest $rest): Rest
     {
-        $rest->call(
-            'POST',
+        $rest->post(
             'transactions',
-            array_merge(['action' => 'REFUND'], $this->buildData())
+            array_merge(['action' => 'REFUND'], $this->getData())
         );
 
         $this->setLevel3Eligible($rest);
@@ -241,10 +269,9 @@ class Card
 
     public function verify(Rest $rest): Rest
     {
-        $rest->call(
-            'POST',
+        $rest->post(
             'transactions',
-            array_merge(['action' => 'VERIFY'], $this->buildData())
+            array_merge(['action' => 'VERIFY'], $this->getData())
         );
 
         $this->setLevel3Eligible($rest);
@@ -252,7 +279,14 @@ class Card
         return $rest;
     }
 
-    private function buildData(): array
+    public function getTransaction(Rest $rest, string $transactionId): Rest
+    {
+        $rest->get("transactions/$transactionId");
+
+        return $rest;
+    }
+
+    private function getData(): array
     {
         $data = [];
 

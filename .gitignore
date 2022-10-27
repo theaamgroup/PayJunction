@@ -1,3 +1,4 @@
 /vendor/
 /config/
+/tests/
 test_creds.txt

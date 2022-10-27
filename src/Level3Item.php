@@ -1,6 +1,6 @@
 <?php
 
-namespace AAM\Payment;
+namespace AAM\PayJunction;
 
 use Exception;
 
@@ -13,8 +13,8 @@ class Level3Item
     private $commodityCode = '';
     private $debitCreditIndicator = 'DEBIT';
     private $description = '';
-    private $discountIndicator = '';
-    private $discountTreatment = '';
+    private $discountIndicator = ''; // set by setAmountDiscount
+    private $discountTreatment = ''; // set by setAmountDiscount
     private $discountRate = 0;
     private $grossNetIndicator = 'GROSS';
     private $productCode = '';
@@ -24,22 +24,30 @@ class Level3Item
 
     public function setAmountDiscount(float $amountDiscount): void
     {
-        $this->amountDiscount = $amountDiscount;
+        $this->amountDiscount = Util::round($amountDiscount);
+
+        if ($this->amountDiscount) {
+            $this->discountIndicator = 'DISCOUNTED';
+            $this->discountTreatment = 'TAX_PRE_DISCOUNT';
+        } else {
+            $this->discountIndicator = 'NOT_DISCOUNTED';
+            $this->discountTreatment = '';
+        }
     }
 
     public function setAmountTax(float $amountTax): void
     {
-        $this->amountTax = $amountTax;
+        $this->amountTax = Util::round($amountTax);
     }
 
     public function setAmountTotal(float $amountTotal): void
     {
-        $this->amountTotal = $amountTotal;
+        $this->amountTotal = Util::round($amountTotal);
     }
 
     public function setAmountUnitCost(float $amountUnitCost): void
     {
-        $this->amountUnitCost = $amountUnitCost;
+        $this->amountUnitCost = Util::round($amountUnitCost);
     }
 
     public function setCommodityCode(string $commodityCode): void
@@ -60,6 +68,60 @@ class Level3Item
 
     public function setDescription(string $description): void
     {
-        $this->description = $description;
+        $this->description = substr($description, 0, 35);
+    }
+
+    public function setDiscountRate(float $discountRate): void
+    {
+        $this->discountRate = round($discountRate, 2);
+    }
+
+    /**
+     * @param string $grossNetIndicator = GROSS (default) | NET
+     * GROSS - amountTotal includes tax (i.e. the total price paid for the item)
+     * NET - amountTotal does not include tax (i.e. the pre-tax price)
+     */
+    public function setGrossNetIndicator(string $grossNetIndicator = 'GROSS | NET'): void
+    {
+        $grossNetIndicator = strtoupper($grossNetIndicator);
+
+        if (!in_array($grossNetIndicator, ['GROSS', 'NET'])) {
+            throw new Exception('grossNetIndicator must be GROSS or NET');
+        }
+
+        $this->grossNetIndicator = $grossNetIndicator;
+    }
+
+    public function setProductCode(string $productCode): void
+    {
+        $this->productCode = substr($productCode, 0, 12);
+    }
+
+    public function setQuantity(float $quantity): void
+    {
+        $this->quantity = Util::round($quantity);
+    }
+
+    public function setTaxRate(float $taxRate): void
+    {
+        $this->taxRate = round($taxRate, 2);
+    }
+
+    public function setUnitOfMeasure(string $unitOfMeasure): void
+    {
+        $this->unitOfMeasure = substr($unitOfMeasure, 0, 12);
+    }
+
+    public function getData(): array
+    {
+        $data = [];
+
+        foreach (get_object_vars($this) as $key => $val) {
+            if ($val) {
+                $data[$key] = $val;
+            }
+        }
+
+        return $data;
     }
 }

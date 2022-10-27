@@ -1,6 +1,6 @@
 <?php
 
-namespace AAM\Payment\Api\Client;
+namespace AAM\PayJunction;
 
 use Exception;
 
@@ -17,6 +17,7 @@ class Rest
     private $success = false;
     private $error_messages = [];
     private $result = [];
+    private $content_type = 'application/x-www-form-urlencoded';
 
     public function __construct(string $app_key, string $api_login, string $api_password, bool $use_sandbox = false)
     {
@@ -44,7 +45,37 @@ class Rest
         $this->api_password = $api_password;
     }
 
-    public function call(string $method, string $endpoint, array $data = [])
+    public function useJsonContentType(): void
+    {
+        $this->content_type = 'application/json';
+    }
+
+    public function useFormContentType(): void
+    {
+        $this->content_type = 'application/x-www-form-urlencoded';
+    }
+
+    public function get(string $endpoint)
+    {
+        return $this->call('GET', $endpoint);
+    }
+
+    public function post(string $endpoint, array $data = [])
+    {
+        return $this->call('POST', $endpoint, $data);
+    }
+
+    public function put(string $endpoint, array $data = [])
+    {
+        return $this->call('PUT', $endpoint, $data);
+    }
+
+    public function delete(string $endpoint)
+    {
+        return $this->call('DELETE', $endpoint);
+    }
+
+    private function call(string $method, string $endpoint, array $data = [])
     {
         $this->result = null;
         $this->success = false;
@@ -77,7 +108,7 @@ class Rest
         $authorization = base64_encode("{$this->api_login}:{$this->api_password}");
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
+            "Content-Type: {$this->content_type}",
             'Accept: application/json',
             "Authorization: Basic $authorization",
             "X-PJ-Application-Key: {$this->app_key}",
