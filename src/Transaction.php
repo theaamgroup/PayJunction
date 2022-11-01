@@ -150,29 +150,13 @@ class Transaction
         $this->billingPhone = $raw_phone;
     }
 
-    public function setBillingAddress(string $billingAddress): void
+    public function setBillingAddress(Address $address): void
     {
-        $this->billingAddress = substr($billingAddress, 0, 128);
-    }
-
-    public function setBillingCity(string $billingCity): void
-    {
-        $this->billingCity = substr($billingCity, 0, 32);
-    }
-
-    public function setBillingState(string $billingState): void
-    {
-        $this->billingState = substr($billingState, 0, 32);
-    }
-
-    public function setBillingZip(string $billingZip): void
-    {
-        $this->billingZip = substr($billingZip, 0, 12);
-    }
-
-    public function setBillingCountry(string $billingCountry): void
-    {
-        $this->billingCountry = substr($billingCountry, 0, 32);
+        $this->billingAddress = $address->getAddress();
+        $this->billingCity = $address->getCity();
+        $this->billingState = $address->getState();
+        $this->billingCountry = $address->getCountry();
+        $this->billingZip = $address->getZip();
     }
 
     public function setBillingEmail(string $billingEmail): void
@@ -206,29 +190,13 @@ class Transaction
         $this->shippingPhone = $raw_phone;
     }
 
-    public function setShippingAddress(string $shippingAddress): void
+    public function setShippingAddress(Address $address): void
     {
-        $this->shippingAddress = substr($shippingAddress, 0, 128);
-    }
-
-    public function setShippingCity(string $shippingCity): void
-    {
-        $this->shippingCity = substr($shippingCity, 0, 32);
-    }
-
-    public function setShippingState(string $shippingState): void
-    {
-        $this->shippingState = substr($shippingState, 0, 32);
-    }
-
-    public function setShippingZip(string $shippingZip): void
-    {
-        $this->shippingZip = substr($shippingZip, 0, 12);
-    }
-
-    public function setShippingCountry(string $shippingCountry): void
-    {
-        $this->shippingCountry = substr($shippingCountry, 0, 32);
+        $this->shippingAddress = $address->getAddress();
+        $this->shippingCity = $address->getCity();
+        $this->shippingState = $address->getState();
+        $this->shippingCountry = $address->getCountry();
+        $this->shippingZip = $address->getZip();
     }
 
     public function setShippingEmail(string $shippingEmail): void

@@ -82,24 +82,12 @@ class Customer
         $this->tokenId = $tokenId;
     }
 
-    public function setAddress(string $address): void
+    public function setAddress(Address $address): void
     {
-        $this->address = substr($address, 0, 128);
-    }
-
-    public function setCity(string $city): void
-    {
-        $this->city = substr($city, 0, 32);
-    }
-
-    public function setState(string $state): void
-    {
-        $this->state = substr($state, 0, 32);
-    }
-
-    public function setZip(string $zip): void
-    {
-        $this->zip = substr($zip, 0, 12);
+        $this->address = $address->getAddress();
+        $this->city = $address->getCity();
+        $this->state = $address->getState();
+        $this->zip = $address->getZip();
     }
 
     public function setAddressId(int $addressId): void
@@ -107,9 +95,30 @@ class Customer
         $this->addressId = $addressId;
     }
 
-    public function create(Rest $rest): Rest
+    public function createCustomer(Rest $rest): Rest
     {
         $rest->post('customers', $this->getData());
+
+        return $rest;
+    }
+
+    public function getCustomer(Rest $rest, int $customerId): Rest
+    {
+        $rest->get("customers/$customerId");
+
+        return $rest;
+    }
+
+    public function updateCustomer(Rest $rest, int $customerId): Rest
+    {
+        $rest->put("customers/$customerId", $this->getData());
+
+        return $rest;
+    }
+
+    public function deleteCustomer(Rest $rest, int $customerId): Rest
+    {
+        $rest->delete("customers/$customerId");
 
         return $rest;
     }
@@ -117,13 +126,6 @@ class Customer
     public function createVault(Rest $rest, int $customerId): Rest
     {
         $rest->post("customers/$customerId/vaults", $this->getData());
-
-        return $rest;
-    }
-
-    public function get(Rest $rest, int $customerId): Rest
-    {
-        $rest->get("customers/$customerId");
 
         return $rest;
     }
@@ -138,6 +140,67 @@ class Customer
     public function getVault(Rest $rest, int $customerId, int $vaultId): Rest
     {
         $rest->get("customers/$customerId/vaults/$vaultId");
+
+        return $rest;
+    }
+
+    public function updateVault(Rest $rest, int $customerId, int $vaultId): Rest
+    {
+        $rest->put("customers/$customerId/vaults/$vaultId", $this->getData());
+
+        return $rest;
+    }
+
+    public function deleteVault(Rest $rest, int $customerId, int $vaultId): Rest
+    {
+        $rest->delete("customers/$customerId/vaults/$vaultId");
+
+        return $rest;
+    }
+
+    public function createAddress(Rest $rest, int $customerId, Address $address): Rest
+    {
+        $rest->post("customers/$customerId/addresses", [
+            'address' => $address->getAddress(),
+            'city' => $address->getCity(),
+            'state' => $address->getState(),
+            'country' => $address->getCountry(),
+            'zip' => $address->getZip(),
+        ]);
+
+        return $rest;
+    }
+
+    public function getAddresses(Rest $rest, int $customerId): Rest
+    {
+        $rest->get("customers/$customerId/addresses?limit=50");
+
+        return $rest;
+    }
+
+    public function getAddress(Rest $rest, int $customerId, int $addressId): Rest
+    {
+        $rest->get("customers/$customerId/addresses/$addressId");
+
+        return $rest;
+    }
+
+    public function updateAddress(Rest $rest, int $customerId, int $addressId, Address $address): Rest
+    {
+        $rest->put("customers/$customerId/addresses/$addressId", [
+            'address' => $address->getAddress(),
+            'city' => $address->getCity(),
+            'state' => $address->getState(),
+            'country' => $address->getCountry(),
+            'zip' => $address->getZip(),
+        ]);
+
+        return $rest;
+    }
+
+    public function deleteAddress(Rest $rest, int $customerId, int $addressId): Rest
+    {
+        $rest->delete("customers/$customerId/addresses/$addressId");
 
         return $rest;
     }

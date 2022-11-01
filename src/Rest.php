@@ -130,7 +130,7 @@ class Rest
         curl_close($ch);
         $errors = $this->result['errors'] ?? [];
 
-        if ($this->curl_status_code !== 200 && !empty($errors)) {
+        if (!in_array($this->curl_status_code, [200, 204]) && !empty($errors)) {
             foreach ($errors as $error) {
                 $this->error_messages[] = $error['message'];
             }
