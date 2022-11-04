@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PayJunction Form</title>
+    <script type="text/javascript" src="https://www.payjunctionlabs.com/trinity/js/sdk.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container-md mt-3">
+        <div class="card">
+            <div class="card-body">
+                <form class="container" id="checkoutForm">
+                    <div id="checkoutFormErrors"></div>
+                    <h4>Card</h4>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="cardNumber" name="cardNumber" value="4111111111111111">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="cardExpMonth" name="cardExpMonth" min="1" max="12" value="1">
+                                <label for="cardExpMonth" class="form-label">Exp Month</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="cardExpYear" name="cardExpYear" min="2022" max="2099" value="2029">
+                                <label for="cardExpYear" class="form-label">Exp Year</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="cardCvv" name="cardCvv" min="0" max="9999" value="999">
+                                <label for="cardCvv" class="form-label">CVV</label>
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Amount</h4>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="amount" name="amount" min=".01" max=".99" value=".99" step=".01">
+                                <label for="amount" class="form-label">Amount</label>
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Customer</h4>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="firstName" name="firstName" value="John">
+                                <label for="firstName" class="form-label">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="lastName" name="lastName" value="Doe">
+                                <label for="lastName" class="form-label">Last Name</label>
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Address</h4>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="billingAddress" name="billingAddress" value="1903 Test St.">
+                                <label for="billingAddress" class="form-label">Billing Address</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="billingCity" name="billingCity" value="Santa Barbara">
+                                <label for="billingCity" class="form-label">Billing City</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="billingState" name="billingState" value="CA">
+                                <label for="billingState" class="form-label">Billing State</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="billingZip" name="billingZip" value="93101">
+                                <label for="billingZip" class="form-label">Billing Zip</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="billingCountry" name="billingCountry" value="US">
+                                <label for="billingCountry" class="form-label">Billing Country</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const errorAlert = document.querySelector('#checkoutFormErrors');
+
+        const clearErrors = () => {
+            errorAlert.innerHTML = '';
+        }
+        
+        const renderErrors = (errors) => {
+            errorAlert.innerHTML = [
+                `<div class="alert alert-danger alert-dismissible" role="alert">`,
+                `   <div>${errors.join(' ')}</div>`,
+                '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                '</div>'
+            ].join('');
+        };
+
+        const payJunction = PayJunction('key_fTGobncQIUqb_E2DsbCSTy1Cuw9O8P3Ra1JLZ1nTirOxHU42YchuhQg730DSs2_4iaptJwXvKWwyQG1zb_JhKQ');
+
+        document.querySelector('#checkoutForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            clearErrors();
+
+            const cardPaymentInformation = {
+                cardNumber: document.querySelector('[name=cardNumber]').value,
+                cardExpMonth: document.querySelector('[name=cardExpMonth]').value,
+                cardExpYear: document.querySelector('[name=cardExpYear]').value,
+                cardCvv: document.querySelector('[name=cardCvv]').value,
+            };
+
+            payJunction.createToken(cardPaymentInformation)
+                .then(function(result) {
+                    if (result.tokenId) {
+                        const formData = new FormData();
+                        formData.append('tokenId', result.tokenId);
+                        formData.append('amount', document.querySelector('[name=amount]').value);
+                        formData.append('billingAddress', document.querySelector('[name=billingAddress]').value);
+                        formData.append('billingCity', document.querySelector('[name=billingCity]').value);
+                        formData.append('billingState', document.querySelector('[name=billingState]').value);
+                        formData.append('billingZip', document.querySelector('[name=billingZip]').value);
+                        formData.append('billingCountry', document.querySelector('[name=billingCountry]').value);
+
+                        fetch('/checkout.php', {
+                            method: 'POST',
+                            body: formData
+                        }).then(function(result) {
+                            return result.json()
+                                .then(function(res) {
+                                    if (res.transactionId) {
+                                        alert(`Transaction complete: ${res.transactionId}`);
+                                    } else if (res.errors) {
+                                        renderErrors(res.errors);
+                                    }
+                                });
+                        });
+                    }
+
+                    if (result.errors) {
+                        const formattedErrors = result.errors.map(function(error) {
+                            return `${error.parameter}: ${error.message}`;
+                        });
+
+                        renderErrors(formattedErrors);
+                    }
+                });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

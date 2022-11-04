@@ -1,4 +1,4 @@
 /vendor/
 /config/
-/scripts/
+/scripts/config.php
 test_creds.txt

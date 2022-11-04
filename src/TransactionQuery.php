@@ -95,16 +95,8 @@ class TransactionQuery
         return $rest;
     }
 
-    private function getData(): array
+    public function getData(): array
     {
-        $data = [];
-
-        foreach (get_object_vars($this) as $key => $val) {
-            if ($val) {
-                $data[$key] = $val;
-            }
-        }
-
-        return $data;
+        return array_filter(get_object_vars($this));
     }
 }

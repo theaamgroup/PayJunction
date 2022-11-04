@@ -59,4 +59,44 @@ class Address
     {
         return $this->zip;
     }
+
+    public function getAll(Rest $rest, int $customerId): Rest
+    {
+        $rest->get("customers/$customerId/addresses?limit=50");
+
+        return $rest;
+    }
+
+    public function get(Rest $rest, int $customerId, int $addressId): Rest
+    {
+        $rest->get("customers/$customerId/addresses/$addressId");
+
+        return $rest;
+    }
+
+    public function create(Rest $rest, int $customerId): Rest
+    {
+        $rest->post("customers/$customerId/addresses", $this->getData());
+
+        return $rest;
+    }
+
+    public function update(Rest $rest, int $customerId, int $addressId): Rest
+    {
+        $rest->put("customers/$customerId/addresses/$addressId", $this->getData());
+
+        return $rest;
+    }
+
+    public function delete(Rest $rest, int $customerId, int $addressId): Rest
+    {
+        $rest->delete("customers/$customerId/addresses/$addressId");
+
+        return $rest;
+    }
+
+    public function getData(): array
+    {
+        return array_filter(get_object_vars($this));
+    }
 }

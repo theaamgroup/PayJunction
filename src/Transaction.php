@@ -10,8 +10,6 @@ class Transaction
 {
     public const STATUSES = ['HOLD', 'CAPTURE', 'VOID'];
     public const AVS = ['ADDRESS', 'ZIP', 'ADDRESS_AND_ZIP', 'ADDRESS_OR_ZIP', 'BYPASS', 'OFF'];
-    public const SCHEDULE_TYPES = ['PERIODIC', 'SPECIFIC_DATES'];
-    public const SCHEDULE_INTERVALS = ['DAY', 'MONTH', 'WEEK', 'YEAR'];
 
     private $tokenId = '';
     private $status = '';
@@ -48,16 +46,6 @@ class Transaction
     private $note = '';
     private $level3Eligible = false;
 
-    // Schedule fields
-    private $vaultId = '';
-    private $transactionId = '';
-    private $scheduleType = '';
-    private $interval = '';
-    private $intervalCount = 0;
-    private $intervalCap = 0;
-    private $startDate = '';
-    private $specificDate1 = '';
-
     public function setTokenId(string $tokenId): void
     {
         $this->tokenId = $tokenId;
@@ -74,7 +62,7 @@ class Transaction
         $this->status = $status;
     }
 
-    public function setTerminalId(string $terminalId): void
+    public function setTerminalId(int $terminalId): void
     {
         $this->terminalId = $terminalId;
     }
@@ -267,17 +255,9 @@ class Transaction
         return $rest;
     }
 
-    private function getData(): array
+    public function getData(): array
     {
-        $data = [];
-
-        foreach (get_object_vars($this) as $key => $val) {
-            if ($val) {
-                $data[$key] = $val;
-            }
-        }
-
-        return $data;
+        return array_filter(get_object_vars($this));
     }
 
     private function setLevel3Eligible(Rest $rest): void
@@ -288,81 +268,5 @@ class Transaction
             $result = $rest->getResult();
             $this->level3Eligible = !empty($result['response']['processor']['level3Eligible']);
         }
-    }
-
-    /**
-     * Used for Schedules
-     * @param string $vaultId - A Vault ID from a previously stored account.
-     */
-    public function setVaultId(string $vaultId): void
-    {
-        $this->vaultId = $vaultId;
-    }
-
-    /**
-     * Used for Schedules
-     * @param string $transactionId - A Transaction ID from a previously charged transaction.
-     */
-    public function setTransactionId(string $transactionId): void
-    {
-        $this->transactionId = $transactionId;
-    }
-
-    public function setScheduleType(string $scheduleType = 'PERIODIC | SPECIFIC_DATES'): void
-    {
-        $scheduleType = strtoupper($scheduleType);
-
-        if (!in_array($scheduleType, self::SCHEDULE_TYPES)) {
-            throw new Exception('scheduleType must be one of the following: ' . implode(', ', self::SCHEDULE_TYPES));
-        }
-
-        $this->scheduleType = $scheduleType;
-    }
-
-    /**
-     * Required for scheduleType=PERIODIC
-     */
-    public function setInterval(string $interval = 'DAY | MONTH | WEEK | YEAR'): void
-    {
-        $interval = strtoupper($interval);
-
-        if (!in_array($interval, self::SCHEDULE_INTERVALS)) {
-            throw new Exception('interval must be one of the following: ' . implode(', ', self::SCHEDULE_INTERVALS));
-        }
-
-        $this->interval = $interval;
-    }
-
-    /**
-     * Required for scheduleType=PERIODIC
-     */
-    public function setIntervalCount(int $intervalCount): void
-    {
-        $this->intervalCount = $intervalCount;
-    }
-
-    /**
-     * Required for scheduleType=PERIODIC
-     * If present, schedule will only run until this number of approved transactions is reached.
-     */
-    public function setIntervalCap(int $intervalCap): void
-    {
-        $this->intervalCap = $intervalCap;
-    }
-
-    /**
-     * Required for scheduleType=PERIODIC
-     */
-    public function setStartDate(DateTime $startDate): void
-    {
-        $this->startDate = $startDate->format('Y-m-d');
-    }
-
-    /**
-     * Required for scheduleType=SPECIFIC_DATES
-     */
-    public function setSpecificDate(DateTime $specificDate1): void
-    {
-        $this->specificDate1 = $specificDate1->format('Y-m-d');
     }
 }
