@@ -146,6 +146,8 @@
                         const formData = new FormData();
                         formData.append('tokenId', result.tokenId);
                         formData.append('amount', document.querySelector('[name=amount]').value);
+                        formData.append('firstName', document.querySelector('[name=firstName]').value);
+                        formData.append('lastName', document.querySelector('[name=lastName]').value);
                         formData.append('billingAddress', document.querySelector('[name=billingAddress]').value);
                         formData.append('billingCity', document.querySelector('[name=billingCity]').value);
                         formData.append('billingState', document.querySelector('[name=billingState]').value);

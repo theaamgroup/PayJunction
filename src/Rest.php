@@ -119,7 +119,13 @@ class Rest
         }
 
         if ($method !== 'GET' && $data) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS,
+                $this->content_type === 'application/json'
+                    ? json_encode($data)
+                    : http_build_query($data)
+            );
         }
 
         $response = curl_exec($ch);

@@ -21,9 +21,12 @@ function response($data, $status = 200)
     die;
 }
 
-function checkRestError(Rest $rest)
+function checkRestError(Rest $rest, string $context)
 {
     if (!$rest->isSuccess()) {
-        response($rest->getResult(), $rest->getCurlStatusCode());
+        response(
+            array_merge($rest->getResult(), ['context' => $context]),
+            $rest->getCurlStatusCode()
+        );
     }
 }

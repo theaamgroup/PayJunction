@@ -25,7 +25,7 @@ try {
     $customer->setFirstName($firstName);
     $customer->setLastName($lastName);
     $rest = $customer->create($rest);
-    checkRestError($rest);
+    checkRestError($rest, 'Customer');
     $customerId = (int) $rest->getResult()['customerId'];
 
     // Create address
@@ -36,7 +36,7 @@ try {
     $address->setCountry($billingCountry);
     $address->setZip($billingZip);
     $rest = $address->create($rest, $customerId);
-    checkRestError($rest);
+    checkRestError($rest, 'Address');
     $addressId = (int) $rest->getResult()['addressId'];
 
     // Create vault
@@ -44,31 +44,22 @@ try {
     $vault->setAddressId($addressId);
     $vault->setTokenId($tokenId);
     $rest = $vault->create($rest, $customerId);
-    checkRestError($rest);
+    checkRestError($rest, 'Vault');
     $vaultId = (int) $rest->getResult()['vaultId'];
 
     // Create transaction
     $transaction = new Transaction();
+    $transaction->setVaultId($vaultId);
     $transaction->setTerminalId((int) TERMINAL_ID);
-    $transaction->setTokenId($tokenId);
     $transaction->setStatus('CAPTURE');
     $transaction->setBillingFirstName($firstName);
     $transaction->setBillingLastName($lastName);
     $transaction->setAmountBase($amount);
     $transaction->setBillingAddress($address);
     $transaction->setAvsCheck('ADDRESS_AND_ZIP');
-    $response = $transaction->charge($rest);
-
-    if ($response->isSuccess()) {
-        http_response_code(200);
-        echo json_encode($response->getResult());
-    } else {
-        http_response_code(400);
-        echo json_encode([
-            'errors' => $response->getErrorMessages(),
-            'status' => $response->getCurlStatusCode()
-        ]);
-    }
+    $rest = $transaction->charge($rest);
+    checkRestError($rest, 'Transaction');
+    response($rest->getResult());
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['errors' => [$e->getMessage()]]);

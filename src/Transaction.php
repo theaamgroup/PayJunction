@@ -3,7 +3,6 @@
 namespace AAM\PayJunction;
 
 use AAM\PayJunction\Rest;
-use DateTime;
 use Exception;
 
 class Transaction
@@ -12,6 +11,7 @@ class Transaction
     public const AVS = ['ADDRESS', 'ZIP', 'ADDRESS_AND_ZIP', 'ADDRESS_OR_ZIP', 'BYPASS', 'OFF'];
 
     private $tokenId = '';
+    private $vaultId = 0;
     private $status = '';
     private $terminalId = '';
     private $avs = 'OFF';
@@ -49,6 +49,11 @@ class Transaction
     public function setTokenId(string $tokenId): void
     {
         $this->tokenId = $tokenId;
+    }
+
+    public function setVaultId(int $vaultId): void
+    {
+        $this->vaultId = $vaultId;
     }
 
     public function setStatus(string $status = 'HOLD | CAPTURE | VOID'): void
