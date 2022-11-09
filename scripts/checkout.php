@@ -2,6 +2,7 @@
 
 use AAM\PayJunction\Address;
 use AAM\PayJunction\Customer;
+use AAM\PayJunction\Schedule;
 use AAM\PayJunction\Transaction;
 use AAM\PayJunction\Vault;
 
@@ -17,6 +18,7 @@ try {
     $billingCountry = $_POST['billingCountry'];
     $billingZip = $_POST['billingZip'];
     $amount = (float) $_POST['amount'];
+    $recurringAmount = (float) $_POST['recurringAmount'];
 
     $rest = useRest();
 
@@ -26,7 +28,7 @@ try {
     $customer->setLastName($lastName);
     $rest = $customer->create($rest);
     checkRestError($rest, 'Customer');
-    $customerId = (int) $rest->getResult()['customerId'];
+    $customerId = (int) $rest->getResult('customerId');
 
     // Create address
     $address = new Address();
@@ -37,7 +39,7 @@ try {
     $address->setZip($billingZip);
     $rest = $address->create($rest, $customerId);
     checkRestError($rest, 'Address');
-    $addressId = (int) $rest->getResult()['addressId'];
+    $addressId = (int) $rest->getResult('addressId');
 
     // Create vault
     $vault = new Vault();
@@ -45,10 +47,11 @@ try {
     $vault->setTokenId($tokenId);
     $rest = $vault->create($rest, $customerId);
     checkRestError($rest, 'Vault');
-    $vaultId = (int) $rest->getResult()['vaultId'];
+    $vaultId = (int) $rest->getResult('vaultId');
 
     // Create transaction
     $transaction = new Transaction();
+    $transaction->setInvoiceNumber(time()); // bypass duplicate transaction blocking
     $transaction->setVaultId($vaultId);
     $transaction->setTerminalId((int) TERMINAL_ID);
     $transaction->setStatus('CAPTURE');
@@ -57,10 +60,32 @@ try {
     $transaction->setAmountBase($amount);
     $transaction->setBillingAddress($address);
     $transaction->setAvsCheck('ADDRESS_AND_ZIP');
-    $rest = $transaction->charge($rest);
+
+    if ($amount > 0) {
+        $rest = $transaction->charge($rest);
+    } else {
+        $rest = $transaction->verify($rest);
+    }
+
     checkRestError($rest, 'Transaction');
+    $transactionId = (int) $rest->getResult('transactionId');
+
+    // Create schedule
+    if ($transactionId && $recurringAmount) {
+        $transaction->setInvoiceNumber('');
+        $transaction->setAmountBase($recurringAmount);
+        $schedule = new Schedule();
+        $schedule->setScheduleType('PERIODIC');
+        $schedule->setInterval('MONTH');
+        $schedule->setIntervalCount(1);
+        $startDate = new DateTime('now', new DateTimeZone('America/New_York'));
+        $startDate->modify('first day of next month');
+        $schedule->setStartDate($startDate);
+        $schedule->create($rest, $transaction);
+        checkRestError($rest, 'Schedule');
+    }
+
     response($rest->getResult());
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['errors' => [$e->getMessage()]]);
+    response(['errors' => [$e->getMessage()]], 500);
 }

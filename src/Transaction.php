@@ -14,8 +14,8 @@ class Transaction
     private $vaultId = 0;
     private $status = '';
     private $terminalId = '';
-    private $avs = 'OFF';
-    private $cvv = 'OFF';
+    private $avs = '';
+    private $cvv = '';
     private $cardCvv = '';
     private $amountBase = 0;
     private $amountShipping = 0;
@@ -253,7 +253,7 @@ class Transaction
         return $rest;
     }
 
-    public function getTransaction(Rest $rest, string $transactionId): Rest
+    public static function getTransaction(Rest $rest, string $transactionId): Rest
     {
         $rest->get("transactions/$transactionId");
 

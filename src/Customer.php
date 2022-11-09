@@ -71,7 +71,7 @@ class Customer
         $this->website = substr($website, 0, 128);
     }
 
-    public function get(Rest $rest, int $customerId): Rest
+    public static function get(Rest $rest, int $customerId): Rest
     {
         $rest->get("customers/$customerId");
 
@@ -92,7 +92,7 @@ class Customer
         return $rest;
     }
 
-    public function delete(Rest $rest, int $customerId): Rest
+    public static function delete(Rest $rest, int $customerId): Rest
     {
         $rest->delete("customers/$customerId");
 

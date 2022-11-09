@@ -50,8 +50,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="amount" name="amount" min=".01" max=".99" value=".99" step=".01">
+                                <input type="number" class="form-control" id="amount" name="amount" value=".99" step=".01">
                                 <label for="amount" class="form-label">Amount</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="recurringAmount" name="recurringAmount" value="0" step=".01">
+                                <label for="recurringAmount" class="form-label">Recurring Amount</label>
                             </div>
                         </div>
                     </div>
@@ -119,9 +125,21 @@
         }
         
         const renderErrors = (errors) => {
+            let messages = [];
+
+            errors.forEach(value => {
+                if (typeof value === 'string') {
+                    messages.push(value);
+                } else if (value.parameter && value.message) {
+                    messages.push(`${value.parameter} - ${value.message}`);
+                } else if (value.message) {
+                    messages.push(value.message);
+                }
+            })
+
             errorAlert.innerHTML = [
                 `<div class="alert alert-danger alert-dismissible" role="alert">`,
-                `   <div>${errors.join(' ')}</div>`,
+                `   <div>${messages.join('<br/>')}</div>`,
                 '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
                 '</div>'
             ].join('');
@@ -146,6 +164,7 @@
                         const formData = new FormData();
                         formData.append('tokenId', result.tokenId);
                         formData.append('amount', document.querySelector('[name=amount]').value);
+                        formData.append('recurringAmount', document.querySelector('[name=recurringAmount]').value);
                         formData.append('firstName', document.querySelector('[name=firstName]').value);
                         formData.append('lastName', document.querySelector('[name=lastName]').value);
                         formData.append('billingAddress', document.querySelector('[name=billingAddress]').value);
@@ -162,6 +181,8 @@
                                 .then(function(res) {
                                     if (res.transactionId) {
                                         alert(`Transaction complete: ${res.transactionId}`);
+                                    } else if (res.scheduleId) {
+                                        alert(`Schedule complete: ${res.scheduleId}`);
                                     } else if (res.errors) {
                                         renderErrors(res.errors);
                                     }

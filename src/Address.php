@@ -60,14 +60,14 @@ class Address
         return $this->zip;
     }
 
-    public function getAll(Rest $rest, int $customerId): Rest
+    public static function getAll(Rest $rest, int $customerId): Rest
     {
         $rest->get("customers/$customerId/addresses?limit=50");
 
         return $rest;
     }
 
-    public function get(Rest $rest, int $customerId, int $addressId): Rest
+    public static function get(Rest $rest, int $customerId, int $addressId): Rest
     {
         $rest->get("customers/$customerId/addresses/$addressId");
 
@@ -88,7 +88,7 @@ class Address
         return $rest;
     }
 
-    public function delete(Rest $rest, int $customerId, int $addressId): Rest
+    public static function delete(Rest $rest, int $customerId, int $addressId): Rest
     {
         $rest->delete("customers/$customerId/addresses/$addressId");
 

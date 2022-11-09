@@ -173,9 +173,13 @@ class Rest
         return $this->success;
     }
 
-    public function getResult(): array
+    public function getResult(string $value = '')
     {
-        return is_array($this->result) ? $this->result : [];
+        if (!$value) {
+            return is_array($this->result) ? $this->result : [];
+        }
+
+        return $this->result[$value] ?? null;
     }
 
     public function getErrorMessages(): array

@@ -2,6 +2,8 @@
 
 namespace AAM\PayJunction;
 
+use DateTime;
+
 class Schedule
 {
     public const SCHEDULE_TYPES = ['PERIODIC', 'SPECIFIC_DATES'];
@@ -87,30 +89,11 @@ class Schedule
     public function create(Rest $rest, Transaction $transaction): Rest
     {
         $rest->post(
-            'transactions',
-            array_merge(['action' => 'VERIFY'], $transaction->getData())
-        );
-
-        if (!$rest->isSuccess()) {
-            return $rest;
-        }
-
-        $result = $rest->getResult();
-        $transactionId = (int) ($result['transactionId'] ?? 0);
-
-        if (!$transactionId) {
-            return $rest;
-        }
-
-        $this->setTransactionId($transactionId);
-
-        $rest->post(
             'schedules',
-            array_merge([
-                'action' => 'CHARGE',
+            array_merge(
                 $transaction->getData(),
-                $this->getData(),
-            ])
+                $this->getData()
+            )
         );
 
         return $rest;

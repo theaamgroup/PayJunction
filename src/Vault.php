@@ -29,14 +29,14 @@ class Vault
         $this->addressId = $addressId;
     }
 
-    public function getAll(Rest $rest, int $customerId): Rest
+    public static function getAll(Rest $rest, int $customerId): Rest
     {
         $rest->get("customers/$customerId/vaults");
 
         return $rest;
     }
 
-    public function get(Rest $rest, int $customerId, int $vaultId): Rest
+    public static function get(Rest $rest, int $customerId, int $vaultId): Rest
     {
         $rest->get("customers/$customerId/vaults/$vaultId");
 
@@ -57,7 +57,7 @@ class Vault
         return $rest;
     }
 
-    public function delete(Rest $rest, int $customerId, int $vaultId): Rest
+    public static function delete(Rest $rest, int $customerId, int $vaultId): Rest
     {
         $rest->delete("customers/$customerId/vaults/$vaultId");
 

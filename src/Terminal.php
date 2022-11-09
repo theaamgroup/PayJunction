@@ -6,7 +6,7 @@ use AAM\PayJunction\Rest;
 
 class Terminal
 {
-    public function getAll(Rest $rest): array
+    public static function getAll(Rest $rest): array
     {
         $rest->get('terminals');
         $result = $rest->getResult();
