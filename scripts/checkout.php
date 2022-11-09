@@ -3,6 +3,7 @@
 use AAM\PayJunction\Address;
 use AAM\PayJunction\Customer;
 use AAM\PayJunction\Schedule;
+use AAM\PayJunction\Terminal;
 use AAM\PayJunction\Transaction;
 use AAM\PayJunction\Vault;
 
@@ -53,7 +54,7 @@ try {
     $transaction = new Transaction();
     $transaction->setInvoiceNumber(time()); // bypass duplicate transaction blocking
     $transaction->setVaultId($vaultId);
-    $transaction->setTerminalId((int) TERMINAL_ID);
+    $transaction->setTerminalId(Terminal::getTerminalId($rest, 'Labs Account'));
     $transaction->setStatus('CAPTURE');
     $transaction->setBillingFirstName($firstName);
     $transaction->setBillingLastName($lastName);
