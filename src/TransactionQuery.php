@@ -26,7 +26,7 @@ class TransactionQuery
         $status = strtoupper($status);
 
         if (!in_array($status, self::STATUSES)) {
-            throw new Exception('status must be one of the following: ' . implode(', ', self::STATUSES));
+            throw new Exception('"status" must be one of the following: ' . implode(', ', self::STATUSES));
         }
 
         $this->status = $status;

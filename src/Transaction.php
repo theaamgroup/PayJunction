@@ -61,7 +61,7 @@ class Transaction
         $status = strtoupper($status);
 
         if (!in_array($status, self::STATUSES)) {
-            throw new Exception('Status must be HOLD, CAPTURE, or VOID');
+            throw new Exception('"status" must be HOLD, CAPTURE, or VOID');
         }
 
         $this->status = $status;
@@ -86,7 +86,7 @@ class Transaction
         $avs = strtoupper($avs);
 
         if (!in_array($avs, self::AVS)) {
-            throw new Exception('AVS must be one of the following: ' . implode(', ', self::AVS));
+            throw new Exception('"avs" must be one of the following: ' . implode(', ', self::AVS));
         }
 
         $this->avs = $avs;
@@ -137,7 +137,7 @@ class Transaction
         $raw_phone = Util::numbersOnly($billingPhone);
 
         if (strlen($raw_phone) > 24) {
-            throw new Exception('Billing phone cannot exceed 24 characters');
+            throw new Exception('"billingPhone" cannot exceed 24 characters');
         }
 
         $this->billingPhone = $raw_phone;
@@ -177,7 +177,7 @@ class Transaction
         $raw_phone = Util::numbersOnly($shippingPhone);
 
         if (strlen($raw_phone) > 24) {
-            throw new Exception('Shipping phone cannot exceed 24 characters');
+            throw new Exception('"shippingPhone" cannot exceed 24 characters');
         }
 
         $this->shippingPhone = $raw_phone;

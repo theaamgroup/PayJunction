@@ -60,7 +60,7 @@ class Level3Item
         $debitCreditIndicator = strtoupper($debitCreditIndicator);
 
         if (!in_array($debitCreditIndicator, ['DEBIT', 'CREDIT'])) {
-            throw new Exception('debitCreditIndicator must be DEBIT or CREDIT');
+            throw new Exception('"debitCreditIndicator" must be DEBIT or CREDIT');
         }
 
         $this->debitCreditIndicator = $debitCreditIndicator;
@@ -86,7 +86,7 @@ class Level3Item
         $grossNetIndicator = strtoupper($grossNetIndicator);
 
         if (!in_array($grossNetIndicator, ['GROSS', 'NET'])) {
-            throw new Exception('grossNetIndicator must be GROSS or NET');
+            throw new Exception('"grossNetIndicator" must be GROSS or NET');
         }
 
         $this->grossNetIndicator = $grossNetIndicator;

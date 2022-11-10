@@ -33,7 +33,7 @@ class Schedule
         $scheduleType = strtoupper($scheduleType);
 
         if (!in_array($scheduleType, self::SCHEDULE_TYPES)) {
-            throw new Exception('scheduleType must be one of the following: ' . implode(', ', self::SCHEDULE_TYPES));
+            throw new Exception('"scheduleType" must be one of the following: ' . implode(', ', self::SCHEDULE_TYPES));
         }
 
         $this->scheduleType = $scheduleType;
@@ -47,7 +47,7 @@ class Schedule
         $interval = strtoupper($interval);
 
         if (!in_array($interval, self::SCHEDULE_INTERVALS)) {
-            throw new Exception('interval must be one of the following: ' . implode(', ', self::SCHEDULE_INTERVALS));
+            throw new Exception('"interval" must be one of the following: ' . implode(', ', self::SCHEDULE_INTERVALS));
         }
 
         $this->interval = $interval;
