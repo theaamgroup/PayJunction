@@ -36,8 +36,4 @@ class Util
 
         return $randomString;
     }
-
-    public static function decodePayload(string $hash, string $secret)
-    {
-    }
 }

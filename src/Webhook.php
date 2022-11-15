@@ -83,5 +83,39 @@ class Webhook
     public static function catchRequest(string $secret = '')
     {
         $pjSignature = $_SERVER['X-Pj-Signature'] ?? '';
+        $requestBody = file_get_contents('php://input');
+
+        if ($pjSignature && $secret) {
+            $hash = hash_hmac('sha256', $requestBody, $secret);
+
+            if (!hash_equals($pjSignature, $hash)) {
+                throw new Exception('Signature does not match');
+            }
+        }
+
+        $payload = json_decode($requestBody, true);
+
+        if ($payload === null) {
+            throw new Exception('Request payload cannot be decoded');
+        }
+
+        $id = $payload['id'] ?? '';
+        $dateCreated = $payload['created'] ?? '';
+        $type = $payload['type'] ?? '';
+        $data = $payload['data'] ?? [];
+        $requestId = $data['requestId'] ?? '';
+        $transactionId = (int) ($data['transactionId'] ?? 0);
+        $inputValue = $data['inputValue'] ?? '';
+        $signatureId = $data['signatureId'] ?? '';
+        $status = $data['status'] ?? '';
+
+        if ($type === 'SMARTTERMINAL_REQUEST' && $status === 'COMPLETE') {
+            if ($inputValue) { // request input - complete
+            } elseif ($signatureId) { // signature capture request - complete
+            } elseif ($transactionId) { // transaction request - complete
+            } else { // transaction request - canceled
+                throw new Exception('Transaction canceled by customer');
+            }
+        }
     }
 }
