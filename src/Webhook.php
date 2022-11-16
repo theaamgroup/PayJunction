@@ -111,8 +111,11 @@ class Webhook
 
         if ($type === 'SMARTTERMINAL_REQUEST' && $status === 'COMPLETE') {
             if ($inputValue) { // request input - complete
+                return ['inputValue' => $inputValue];
             } elseif ($signatureId) { // signature capture request - complete
+                return ['signatureId' => $signatureId];
             } elseif ($transactionId) { // transaction request - complete
+                return ['transactionId' => $transactionId];
             } else { // transaction request - canceled
                 throw new Exception('Transaction canceled by customer');
             }
