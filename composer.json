@@ -7,6 +7,7 @@
             "AAM\\PayJunction\\": "src/"
         }
     },
+    "license": "MIT",
     "authors": [
         {
             "name": "Jodi Nichols",
