@@ -29,4 +29,19 @@ class PublishableKey
 
         return [];
     }
+
+    public static function getOne(Rest $rest): string
+    {
+        $allKeys = self::getAll($rest);
+
+        if (empty($allKeys)) {
+            return self::create($rest);
+        }
+
+        if (!empty($allKeys[0]['keyValue'])) {
+            return $allKeys[0]['keyValue'];
+        }
+
+        return '';
+    }
 }
