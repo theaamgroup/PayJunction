@@ -6,7 +6,7 @@ use AAM\PayJunction\Rest;
 
 class PublishableKey
 {
-    public function create(Rest $rest): string
+    public static function create(Rest $rest): string
     {
         $rest->post('publishablekeys');
         $result = $rest->getResult();
@@ -18,7 +18,7 @@ class PublishableKey
         return '';
     }
 
-    public function getAll(Rest $rest): array
+    public static function getAll(Rest $rest): array
     {
         $rest->get('publishablekeys');
         $result = $rest->getResult();
