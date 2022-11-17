@@ -54,7 +54,7 @@ try {
     $transaction = new Transaction();
     $transaction->setInvoiceNumber(time()); // bypass duplicate transaction blocking
     $transaction->setVaultId($vaultId);
-    $transaction->setTerminalId(Terminal::getTerminalId($rest, 'Labs Account'));
+    $transaction->setTerminalId(Terminal::getTerminalId($rest, 'Labs Account', 'CARD'));
     $transaction->setStatus('CAPTURE');
     $transaction->setBillingFirstName($firstName);
     $transaction->setBillingLastName($lastName);
