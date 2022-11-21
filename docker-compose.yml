@@ -10,7 +10,7 @@ services:
       dockerfile: Dockerfile
       target: base
     ports:
-      - "8000:80"
+      - "8002:80"
     volumes:
       - ./scripts:/var/www/html
       - ./src:/var/www/src
