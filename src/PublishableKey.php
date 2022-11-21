@@ -3,6 +3,7 @@
 namespace AAM\PayJunction;
 
 use AAM\PayJunction\Rest;
+use Exception;
 
 class PublishableKey
 {
@@ -11,11 +12,11 @@ class PublishableKey
         $rest->post('publishablekeys');
         $result = $rest->getResult();
 
-        if ($rest->isSuccess() && !empty($result['keyValue'])) {
-            return $result['keyValue'];
+        if (!$rest->isSuccess()) {
+            throw new Exception(implode(' ', $rest->getErrorMessages()));
         }
 
-        return '';
+        return $result['keyValue'] ?? '';
     }
 
     public static function getAll(Rest $rest): array
@@ -23,11 +24,11 @@ class PublishableKey
         $rest->get('publishablekeys');
         $result = $rest->getResult();
 
-        if ($rest->isSuccess() && !empty($result['results'])) {
-            return $result['results'];
+        if (!$rest->isSuccess()) {
+            throw new Exception(implode(' ', $rest->getErrorMessages()));
         }
 
-        return [];
+        return $result['results'] ?? [];
     }
 
     public static function getOne(Rest $rest): string
