@@ -16,6 +16,11 @@ class Util
         return round($num, 4);
     }
 
+    public static function minmax(int $val, int $min, int $max = 2147483648): int
+    {
+        return min(max($val, $min), $max);
+    }
+
     public static function generateSecret(int $length = 16): string
     {
         if ($length < 16) {

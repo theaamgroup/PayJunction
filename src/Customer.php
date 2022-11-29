@@ -15,6 +15,8 @@ class Customer
     private $phone = '';
     private $phone2 = '';
     private $website = '';
+    private $limit = 50;
+    private $offset = 0;
 
     public function setCompanyName(string $companyName): void
     {
@@ -71,9 +73,26 @@ class Customer
         $this->website = substr($website, 0, 128);
     }
 
+    public function setLimit(int $limit): void
+    {
+        $this->limit = Util::minmax($limit, 1, 50);
+    }
+
+    public function setOffset(int $offset): void
+    {
+        $this->offset = Util::minmax($offset, 0);
+    }
+
     public static function get(Rest $rest, int $customerId): Rest
     {
         $rest->get("customers/$customerId");
+
+        return $rest;
+    }
+
+    public function search(Rest $rest): Rest
+    {
+        $rest->get('customers', $this->getData());
 
         return $rest;
     }

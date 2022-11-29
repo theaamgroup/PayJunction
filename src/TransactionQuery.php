@@ -80,12 +80,12 @@ class TransactionQuery
 
     public function setLimit(int $limit): void
     {
-        $this->limit = $limit > 50 ? 50 : $limit;
+        $this->limit = Util::minmax($limit, 1, 50);
     }
 
     public function setOffset(int $offset): void
     {
-        $this->offset = $offset;
+        $this->offset = Util::minmax($offset, 0);
     }
 
     public function search(Rest $rest): Rest

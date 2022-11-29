@@ -55,9 +55,9 @@ class Rest
         $this->content_type = 'application/x-www-form-urlencoded';
     }
 
-    public function get(string $endpoint)
+    public function get(string $endpoint, array $data = [])
     {
-        return $this->call('GET', $endpoint);
+        return $this->call('GET', $endpoint, $data);
     }
 
     public function post(string $endpoint, array $data = [])
