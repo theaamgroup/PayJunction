@@ -83,6 +83,15 @@ class Customer
         $this->offset = Util::minmax($offset, 0);
     }
 
+    public function canSearch(): bool
+    {
+        $searchableFields = array_filter($this->getData(), function ($k) {
+            return in_array($k, ['firstName', 'lastName', 'companyName', 'identifier']);
+        }, ARRAY_FILTER_USE_KEY);
+
+        return !empty($searchableFields);
+    }
+
     public static function get(Rest $rest, int $customerId): Rest
     {
         $rest->get("customers/$customerId");
