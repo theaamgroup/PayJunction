@@ -21,6 +21,7 @@ class Transaction
     private $amountShipping = 0;
     private $amountTax = 0; // level 2
     private $amountFreight = 0; // level 3
+    private $billingIdentifier = '';
     private $billingFirstName = '';
     private $billingLastName = '';
     private $billingCompanyName = ''; // level 2
@@ -31,6 +32,7 @@ class Transaction
     private $billingZip = ''; // level 2
     private $billingCountry = '';
     private $billingEmail = '';
+    private $shippingIdentifier = '';
     private $shippingFirstName = '';
     private $shippingLastName = '';
     private $shippingCompanyName = '';
@@ -117,6 +119,11 @@ class Transaction
         $this->amountTax = Util::round($amountTax);
     }
 
+    public function setBillingIdentifier(string $billingIdentifier): void
+    {
+        $this->billingIdentifier = substr($billingIdentifier, 0, 64);
+    }
+
     public function setBillingFirstName(string $billingFirstName): void
     {
         $this->billingFirstName = substr($billingFirstName, 0, 16);
@@ -155,6 +162,11 @@ class Transaction
     public function setBillingEmail(string $billingEmail): void
     {
         $this->billingEmail = substr($billingEmail, 0, 128);
+    }
+
+    public function setShippingIdentifier(string $shippingIdentifier): void
+    {
+        $this->shippingIdentifier = substr($shippingIdentifier, 0, 64);
     }
 
     public function setShippingFirstName(string $shippingFirstName): void
