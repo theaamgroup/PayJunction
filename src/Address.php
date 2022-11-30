@@ -88,6 +88,32 @@ class Address
         return $rest;
     }
 
+    /**
+     * Updates a customer address if it exists;
+     * otherwise, creates a new customer address.
+     */
+    public static function updateOrCreate(Rest $rest, int $customerId, Address $address): Rest
+    {
+        // Search for address
+        $address_results = self::getAll($rest, $customerId)->getResult('results');
+        $existing = null;
+
+        if (is_array($address_results) && $address->getAddress()) {
+            foreach ($address_results as $address_result) {
+                if (strtolower($address->getAddress()) === strtolower($address_result['address'] ?? '')) {
+                    $existing = $address_result;
+                }
+            }
+        }
+
+        // Update existing address
+        if (isset($existing['addressId'])) {
+            return $address->update($rest, $customerId, (int) $existing['addressId']);
+        }
+
+        return $address->create($rest, $customerId);
+    }
+
     public static function delete(Rest $rest, int $customerId, int $addressId): Rest
     {
         $rest->delete("customers/$customerId/addresses/$addressId");

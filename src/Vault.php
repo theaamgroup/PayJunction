@@ -5,6 +5,8 @@ namespace AAM\PayJunction;
 class Vault
 {
     private $tokenId = '';
+    private $cardExpMonth = '';
+    private $cardExpYear = '';
     private $address = '';
     private $city = '';
     private $state = '';
@@ -14,6 +16,16 @@ class Vault
     public function setTokenId(string $tokenId): void
     {
         $this->tokenId = $tokenId;
+    }
+
+    public function setCardExpMonth(int $cardExpMonth): void
+    {
+        $this->cardExpMonth = $cardExpMonth;
+    }
+
+    public function setCardExpYear(int $cardExpYear): void
+    {
+        $this->cardExpYear = $cardExpYear;
     }
 
     public function setAddress(Address $address): void

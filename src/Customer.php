@@ -83,7 +83,7 @@ class Customer
         $this->offset = Util::minmax($offset, 0);
     }
 
-    public function canSearch(): bool
+    public function isSearchable(): bool
     {
         $searchableFields = array_filter($this->getData(), function ($k) {
             return in_array($k, ['firstName', 'lastName', 'companyName', 'identifier']);
@@ -118,6 +118,41 @@ class Customer
         $rest->put("customers/$customerId", $this->getData());
 
         return $rest;
+    }
+
+    /**
+     * Updates a customer by identifier or firstName and lastName if it exists;
+     * otherwise, creates a new customer.
+     */
+    public static function updateOrCreate(Rest $rest, Customer $customer): Rest
+    {
+        // Search for customer
+        $data = $customer->getData();
+        $customer_search = new Customer();
+
+        if (isset($data['identifier'])) {
+            $customer_search->setIdentifier($data['identifier']);
+        } elseif (isset($data['firstName']) && isset($data['lastName'])) {
+            $customer_search->setFirstName($data['firstName']);
+            $customer_search->setLastName($data['lastName']);
+        }
+
+        $existing = null;
+
+        if ($customer_search->isSearchable()) {
+            $search_results = $customer_search->search($rest)->getResult('results');
+
+            if (!empty($search_results)) {
+                $existing = $search_results[0];
+            }
+        }
+
+        // Update existing customer
+        if (isset($existing['customerId'])) {
+            return $customer->update($rest, (int) $existing['customerId']);
+        }
+
+        return $customer->create($rest);
     }
 
     public static function delete(Rest $rest, int $customerId): Rest
