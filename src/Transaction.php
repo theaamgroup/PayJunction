@@ -265,6 +265,13 @@ class Transaction
         return $rest;
     }
 
+    public function update(Rest $rest, string $transactionId): Rest
+    {
+        $rest->put("transactions/$transactionId", $this->getData());
+
+        return $rest;
+    }
+
     public static function getTransaction(Rest $rest, string $transactionId): Rest
     {
         $rest->get("transactions/$transactionId");
