@@ -10,6 +10,7 @@ class Transaction
     public const STATUSES = ['HOLD', 'CAPTURE', 'VOID'];
     public const AVS = ['ADDRESS', 'ZIP', 'ADDRESS_AND_ZIP', 'ADDRESS_OR_ZIP', 'BYPASS', 'OFF'];
 
+    private $transactionId = 0;
     private $tokenId = '';
     private $vaultId = 0;
     private $status = '';
@@ -47,6 +48,11 @@ class Transaction
     private $purchaseOrderNumber = ''; // level 2
     private $note = '';
     private $level3Eligible = false;
+
+    public function setTransactionId(int $transactionId): void
+    {
+        $this->transactionId = $transactionId;
+    }
 
     public function setTokenId(string $tokenId): void
     {
