@@ -9,7 +9,6 @@ class Transaction
 {
     public const STATUSES = ['HOLD', 'CAPTURE', 'VOID'];
     public const AVS = ['ADDRESS', 'ZIP', 'ADDRESS_AND_ZIP', 'ADDRESS_OR_ZIP', 'BYPASS', 'OFF'];
-    private const AMOUNT_FIELDS = ['amountBase', 'amountShipping', 'amountTax'];
 
     private $transactionId = 0;
     private $tokenId = '';
@@ -252,7 +251,12 @@ class Transaction
     {
         $rest->post(
             'transactions',
-            array_merge(['action' => 'REFUND'], $this->getData())
+            array_merge($this->getData(), [
+                'action' => 'REFUND',
+                'amountBase' => $this->amountBase,
+                'amountShipping' => $this->amountShipping,
+                'amountTax' => $this->amountTax,
+            ])
         );
 
         $this->setLevel3Eligible($rest);
@@ -288,9 +292,7 @@ class Transaction
 
     public function getData(): array
     {
-        return array_filter(get_object_vars($this), function ($k) {
-            return in_array($k, self::AMOUNT_FIELDS) || !empty($this->{$k});
-        }, ARRAY_FILTER_USE_KEY);
+        return array_filter(get_object_vars($this));
     }
 
     private function setLevel3Eligible(Rest $rest): void
