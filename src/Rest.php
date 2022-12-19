@@ -138,7 +138,14 @@ class Rest
 
         if (!in_array($this->curl_status_code, [200, 204]) && !empty($errors)) {
             foreach ($errors as $error) {
-                $this->error_messages[] = $error['message'];
+                $parameter = $error['parameter'] ?? '';
+                $message = $error['message'] ?? '';
+
+                if ($parameter && $message) {
+                    $message = $parameter . ': ' . $message;
+                }
+
+                $this->error_messages[] = $message;
             }
 
             return $this->error_messages;
