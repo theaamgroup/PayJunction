@@ -99,26 +99,6 @@ class Webhook
             throw new Exception('Request payload cannot be decoded');
         }
 
-        $id = $payload['id'] ?? '';
-        $dateCreated = $payload['created'] ?? '';
-        $type = $payload['type'] ?? '';
-        $data = $payload['data'] ?? [];
-        $requestId = $data['requestId'] ?? '';
-        $transactionId = (int) ($data['transactionId'] ?? 0);
-        $inputValue = $data['inputValue'] ?? '';
-        $signatureId = $data['signatureId'] ?? '';
-        $status = $data['status'] ?? '';
-
-        if ($type === 'SMARTTERMINAL_REQUEST' && $status === 'COMPLETE') {
-            if ($inputValue) { // request input - complete
-                return ['inputValue' => $inputValue];
-            } elseif ($signatureId) { // signature capture request - complete
-                return ['signatureId' => $signatureId];
-            } elseif ($transactionId) { // transaction request - complete
-                return ['transactionId' => $transactionId];
-            } else { // transaction request - canceled
-                throw new Exception('Transaction canceled by customer');
-            }
-        }
+        return $payload;
     }
 }
