@@ -249,16 +249,15 @@ class Transaction
 
     public function refund(Rest $rest): Rest
     {
-        $rest->post(
-            'transactions',
-            array_merge($this->getData(), [
-                'action' => 'REFUND',
-                'amountBase' => $this->amountBase,
-                'amountShipping' => $this->amountShipping,
-                'amountTax' => $this->amountTax,
-            ])
-        );
+        $data = array_merge($this->getData(), ['action' => 'REFUND']);
 
+        if ($this->amountBase || $this->amountShipping || $this->amountTax) {
+            $data['amountBase'] = $this->amountBase;
+            $data['amountShipping'] = $this->amountShipping;
+            $data['amountTax'] = $this->amountTax;
+        }
+
+        $rest->post('transactions', $data);
         $this->setLevel3Eligible($rest);
 
         return $rest;
