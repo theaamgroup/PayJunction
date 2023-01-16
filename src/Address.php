@@ -100,7 +100,14 @@ class Address
 
         if (is_array($address_results) && $address->getAddress()) {
             foreach ($address_results as $address_result) {
-                if (strtolower($address->getAddress()) === strtolower($address_result['address'] ?? '')) {
+                $addr1 = strtolower($address->getAddress());
+                $addr2 = strtolower($address_result['address'] ?? '');
+                $zip1 = strtolower($address->getZip());
+                $zip2 = strtolower($address_result['zip'] ?? '');
+                $addr_match = strpos($addr1, $addr2) !== false || strpos($addr2, $addr1) !== false;
+                $zip_match = $zip1 === $zip2;
+
+                if ($addr_match && $zip_match) {
                     $existing = $address_result;
                 }
             }
