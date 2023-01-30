@@ -17,7 +17,6 @@ class Rest
     private $success = false;
     private $error_messages = [];
     private $result = [];
-    private $content_type = 'application/x-www-form-urlencoded';
 
     public function __construct(string $app_key, string $api_login, string $api_password, bool $use_sandbox = false)
     {
@@ -43,16 +42,6 @@ class Rest
     {
         $this->api_login = $api_login;
         $this->api_password = $api_password;
-    }
-
-    public function useJsonContentType(): void
-    {
-        $this->content_type = 'application/json';
-    }
-
-    public function useFormContentType(): void
-    {
-        $this->content_type = 'application/x-www-form-urlencoded';
     }
 
     public function get(string $endpoint, array $data = [])
@@ -95,9 +84,28 @@ class Rest
 
         $method = strtoupper($method);
         $request_url = $this->api_domain . $endpoint;
+        $data_string = '';
 
-        if ($method === 'GET' && $data) {
-            $request_url .= '?' . http_build_query($data);
+        if ($data) {
+            $data_params = [];
+
+            foreach ($data as $key => $val) {
+                if (is_array($val)) {
+                    $val_items = $val;
+
+                    foreach ($val_items as $val) {
+                        $data_params[] = $key . '[]=' . urlencode(json_encode($val));
+                    }
+                } else {
+                    $data_params[] = $key . '=' . urlencode($val);
+                }
+            }
+
+            $data_string = implode('&', $data_params);
+        }
+
+        if ($method === 'GET' && $data_string) {
+            $request_url .= '?' . $data_string;
         }
 
         $ch = curl_init($request_url);
@@ -108,7 +116,7 @@ class Rest
         $authorization = base64_encode("{$this->api_login}:{$this->api_password}");
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Content-Type: {$this->content_type}",
+            "Content-Type: application/x-www-form-urlencoded",
             'Accept: application/json',
             "Authorization: Basic $authorization",
             "X-PJ-Application-Key: {$this->app_key}",
@@ -118,13 +126,11 @@ class Rest
             curl_setopt($ch, CURLOPT_POST, true);
         }
 
-        if ($method !== 'GET' && $data) {
+        if ($method !== 'GET' && $data_string) {
             curl_setopt(
                 $ch,
                 CURLOPT_POSTFIELDS,
-                $this->content_type === 'application/json'
-                    ? json_encode($data)
-                    : http_build_query($data)
+                $data_string
             );
         }
 
