@@ -21,17 +21,17 @@ class Level3Data
 
     public function setSummaryCommodityCode(string $summaryCommodityCode): void
     {
-        $this->summaryCommodityCode = substr($summaryCommodityCode, 0, 4);
+        $this->summaryCommodityCode = substr(Util::alphaNumericOnly($summaryCommodityCode), 0, 4);
     }
 
     public function setDestinationZip(string $destinationZip): void
     {
-        $this->destinationZip = substr($destinationZip, 0, 10);
+        $this->destinationZip = substr(Util::alphaNumericOnly($destinationZip), 0, 10);
     }
 
     public function setShipFromZip(string $shipFromZip): void
     {
-        $this->shipFromZip = substr($shipFromZip, 0, 10);
+        $this->shipFromZip = substr(Util::alphaNumericOnly($shipFromZip), 0, 10);
     }
 
     public function addItem(Level3Item $level3Item): void

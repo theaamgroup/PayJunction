@@ -11,6 +11,11 @@ class Util
         return preg_replace('/\D/', '', $str);
     }
 
+    public static function alphaNumericOnly(string $str): string
+    {
+        return preg_replace('/[^A-Za-z0-9 ]/', '', $str);
+    }
+
     public static function round(float $num): float
     {
         return round($num, 4);

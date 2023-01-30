@@ -2,6 +2,7 @@
 
 namespace AAM\PayJunction;
 
+use AAM\PayJunction\Util;
 use Exception;
 
 class Level3Item
@@ -13,7 +14,7 @@ class Level3Item
     private $commodityCode = '';
     private $debitCreditIndicator = 'DEBIT';
     private $description = '';
-    private $discountIndicator = ''; // set by setAmountDiscount
+    private $discountIndicator = 'NOT_DISCOUNTED'; // set by setAmountDiscount
     private $discountTreatment = ''; // set by setAmountDiscount
     private $discountRate = 0;
     private $grossNetIndicator = 'GROSS';
@@ -52,7 +53,7 @@ class Level3Item
 
     public function setCommodityCode(string $commodityCode): void
     {
-        $this->commodityCode = substr($commodityCode, 0, 12);
+        $this->commodityCode = substr(Util::alphaNumericOnly($commodityCode), 0, 12);
     }
 
     public function setDebitCreditIndicator(string $debitCreditIndicator = 'DEBIT | CREDIT'): void
@@ -68,7 +69,7 @@ class Level3Item
 
     public function setDescription(string $description): void
     {
-        $this->description = substr($description, 0, 35);
+        $this->description = substr(Util::alphaNumericOnly($description), 0, 35);
     }
 
     public function setDiscountRate(float $discountRate): void
@@ -94,7 +95,7 @@ class Level3Item
 
     public function setProductCode(string $productCode): void
     {
-        $this->productCode = substr($productCode, 0, 12);
+        $this->productCode = substr(Util::alphaNumericOnly($productCode), 0, 12);
     }
 
     public function setQuantity(float $quantity): void
@@ -109,7 +110,7 @@ class Level3Item
 
     public function setUnitOfMeasure(string $unitOfMeasure): void
     {
-        $this->unitOfMeasure = substr($unitOfMeasure, 0, 12);
+        $this->unitOfMeasure = substr(Util::alphaNumericOnly($unitOfMeasure), 0, 12);
     }
 
     public function getData(): array
