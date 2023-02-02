@@ -71,6 +71,13 @@ class Level3Data
         return $rest;
     }
 
+    public static function getLevel3Data(Rest $rest, string $transactionId): Rest
+    {
+        $rest->get("transactions/$transactionId/level3");
+
+        return $rest;
+    }
+
     public function getData(): array
     {
         return array_filter(get_object_vars($this));
