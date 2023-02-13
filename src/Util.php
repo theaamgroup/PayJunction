@@ -50,18 +50,18 @@ class Util
     public static function getExpMonths(): array
     {
         return [
-            1 => '01-Jan',
-            2 => '02-Feb',
-            3 => '03-Mar',
-            4 => '04-Apr',
-            5 => '05-May',
-            6 => '06-Jun',
-            7 => '07-Jul',
-            8 => '08-Aug',
-            9 => '09-Sep',
-            10 => '10-Oct',
-            11 => '11-Nov',
-            12 => '12-Dec',
+            '1' => '01-Jan',
+            '2' => '02-Feb',
+            '3' => '03-Mar',
+            '4' => '04-Apr',
+            '5' => '05-May',
+            '6' => '06-Jun',
+            '7' => '07-Jul',
+            '8' => '08-Aug',
+            '9' => '09-Sep',
+            '10' => '10-Oct',
+            '11' => '11-Nov',
+            '12' => '12-Dec',
         ];
     }
 
@@ -72,7 +72,7 @@ class Util
 
         for ($i = 1; $i <= 10; $i += 1) {
             $nextYear = $currentYear + $i;
-            $years[$nextYear] = $nextYear;
+            $years[(string) $nextYear] = $nextYear;
         }
 
         return $years;
