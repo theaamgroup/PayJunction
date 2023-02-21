@@ -18,7 +18,7 @@ class Util
 
     public static function round(float $num): float
     {
-        return round($num, 4);
+        return round($num, 2);
     }
 
     public static function minmax(int $val, int $min, int $max = 2147483648): int
