@@ -16,9 +16,9 @@ class Util
         return preg_replace('/[^A-Za-z0-9 ]/', '', $str);
     }
 
-    public static function round(float $num): float
+    public static function round(float $num): string
     {
-        return round($num, 2);
+        return number_format(round($num, 2), 2, '.', ',');
     }
 
     public static function minmax(int $val, int $min, int $max = 2147483648): int
