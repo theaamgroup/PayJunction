@@ -11,7 +11,7 @@ function useRest(): Rest
         throw new Exception('Config constants APP_KEY, API_LOGIN, and API_PASSWORD must exist');
     }
 
-    return new Rest(APP_KEY, API_LOGIN, API_PASSWORD, true);
+    return new Rest(APP_KEY, API_LOGIN, API_PASSWORD, SANDBOX);
 }
 
 function response($data, $status = 200)

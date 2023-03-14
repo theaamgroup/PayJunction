@@ -158,7 +158,7 @@ class Rest
         }
 
         if ($this->result === null && !in_array($this->curl_status_code, [200, 204])) {
-            throw new Exception('Received empty response from payment API');
+            throw new Exception("[$method/$endpoint] Received empty response from payment API");
         }
 
         $this->success = true;
