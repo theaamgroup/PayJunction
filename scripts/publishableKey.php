@@ -4,9 +4,12 @@ use AAM\PayJunction\PublishableKey;
 
 require_once __DIR__ . '/functions.php';
 
-$rest = useRest();
-echo '<pre>';
-print_r(PublishableKey::getAll($rest));
-print_r(PublishableKey::getOne($rest));
-echo '</pre>';
-die;
+try {
+    $rest = useRest();
+    echo '<pre>';
+    print_r(PublishableKey::getAll($rest));
+    print_r(PublishableKey::getOne($rest));
+    echo '</pre>';
+} catch (Exception $e) {
+    echo $e->getMessage();
+}

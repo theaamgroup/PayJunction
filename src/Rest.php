@@ -17,6 +17,7 @@ class Rest
     private $success = false;
     private $error_messages = [];
     private $result = [];
+    private $debug_message = '';
 
     public function __construct(string $app_key, string $api_login, string $api_password, bool $use_sandbox = false)
     {
@@ -69,6 +70,7 @@ class Rest
         $this->result = null;
         $this->success = false;
         $this->error_messages = [];
+        $this->debug_message = '';
 
         if (!$this->api_domain) {
             throw new Exception('Payment API domain must be set');
@@ -141,30 +143,63 @@ class Rest
         $this->result = json_decode($response, true);
         curl_close($ch);
         $errors = $this->result['errors'] ?? [];
+        $bad_status = !in_array($this->curl_status_code, [200, 204]);
 
-        if (!in_array($this->curl_status_code, [200, 204]) && !empty($errors)) {
-            foreach ($errors as $error) {
-                $parameter = $error['parameter'] ?? '';
-                $message = $error['message'] ?? '';
+        if ($bad_status) {
+            $this->success = false;
 
-                if ($parameter && $message) {
-                    $message = $parameter . ': ' . $message;
+            $this->debug_message = "[$method/$endpoint - " . $this->curl_status_code . "] "
+                . $this->getStatusCodeMessage() . "\n"
+                . "Request URL: " . $request_url . "\n"
+                . "Request Data: " . ($data_string ?: 'empty') . "\n"
+                . "Response Data: " . ($this->result ? print_r($this->result, true) : 'empty');
+
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    $parameter = $error['parameter'] ?? '';
+                    $message = $error['message'] ?? '';
+
+                    if ($parameter && $message) {
+                        $message = $parameter . ': ' . $message;
+                    }
+
+                    $this->error_messages[] = $message;
                 }
 
-                $this->error_messages[] = $message;
+                return $this->error_messages;
             }
 
-            return $this->error_messages;
+            if ($this->result === null) {
+                throw new Exception("[$method/$endpoint - " . $this->curl_status_code . "]"
+                    . " Received empty response from payment API");
+            }
+        } else {
+            $this->success = true;
         }
-
-        if ($this->result === null && !in_array($this->curl_status_code, [200, 204])) {
-            throw new Exception("[$method/$endpoint - " . $this->curl_status_code . "]"
-                . " Received empty response from payment API");
-        }
-
-        $this->success = true;
 
         return $this->result;
+    }
+
+    private function getStatusCodeMessage(): string
+    {
+        $status_codes = [
+            200 => 'Success',
+            204 => 'No Content',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            406 => 'Not Acceptable',
+            500 => 'Internal Server Error',
+        ];
+
+        return $status_codes[$this->curl_status_code] ?? 'Unknown Status Code';
+    }
+
+    public function getDebugMessage(): string
+    {
+        return $this->debug_message;
     }
 
     public function getCurlErrno(): int

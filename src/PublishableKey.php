@@ -13,7 +13,8 @@ class PublishableKey
         $result = $rest->getResult();
 
         if (!$rest->isSuccess()) {
-            throw new Exception(implode(' ', $rest->getErrorMessages()));
+            $message = $rest->getDebugMessage() . 'Errors: ' . implode(' ', $rest->getErrorMessages());
+            throw new Exception($message);
         }
 
         return $result['keyValue'] ?? '';
@@ -25,7 +26,8 @@ class PublishableKey
         $result = $rest->getResult();
 
         if (!$rest->isSuccess()) {
-            throw new Exception(implode(' ', $rest->getErrorMessages()));
+            $message = $rest->getDebugMessage() . 'Errors: ' . implode(' ', $rest->getErrorMessages());
+            throw new Exception($message);
         }
 
         return $result['results'] ?? [];
