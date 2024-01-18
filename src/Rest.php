@@ -117,12 +117,18 @@ class Rest
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         $authorization = base64_encode("{$this->api_login}:{$this->api_password}");
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        $headers = [
             "Content-Type: application/x-www-form-urlencoded",
             'Accept: application/json',
             "Authorization: Basic $authorization",
             "X-PJ-Application-Key: {$this->app_key}",
-        ]);
+        ];
+
+        if ($method === 'POST' && !$data_string) {
+            $headers[] = 'Content-Length: 0';
+        }
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         if ($method === 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
