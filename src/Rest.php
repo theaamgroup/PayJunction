@@ -6,6 +6,7 @@ use Exception;
 
 class Rest
 {
+    private $api_version = '';
     private $api_domain = '';
     private $sdk_url = '';
     private $app_key = '';
@@ -43,6 +44,11 @@ class Rest
     {
         $this->api_login = $api_login;
         $this->api_password = $api_password;
+    }
+
+    public function setApiVersion(string $api_version): void
+    {
+        $this->api_version = $api_version;
     }
 
     public function get(string $endpoint, array $data = [])
@@ -123,6 +129,10 @@ class Rest
             "Authorization: Basic $authorization",
             "X-PJ-Application-Key: {$this->app_key}",
         ];
+
+        if ($this->api_version) {
+            $headers[] = "Pj-Version: {$this->api_version}";
+        }
 
         if ($method === 'POST' && !$data_string) {
             $headers[] = 'Content-Length: 0';
