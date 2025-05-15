@@ -12,6 +12,9 @@ class SmartTerminal
     private $action = '';
     private $amountBase = 0;
     private $amountShipping = 0;
+    private $amountSurcharge = 0;
+    private $amountSurchargeTax = 0;
+    private $amountTax = 0;
     private $terminalId = 0;
     private $showReceiptPrompt = false;
     private $showSignaturePrompt = true;
@@ -38,7 +41,7 @@ class SmartTerminal
 
     public function setAmountBase(float $amountBase): void
     {
-        $amountBase = round($amountBase, 2);
+        $amountBase = Util::round($amountBase);
 
         if ($amountBase < 0 || $amountBase > 1000000) {
             throw new Exception('"amountBase" must be between 0 and 1,000,000');
@@ -49,13 +52,28 @@ class SmartTerminal
 
     public function setAmountShipping(float $amountShipping): void
     {
-        $amountShipping = round($amountShipping, 2);
+        $amountShipping = Util::round($amountShipping);
 
         if ($amountShipping < 0 || $amountShipping > 1000000) {
             throw new Exception('"amountShipping" must be between 0 and 1,000,000');
         }
 
         $this->amountShipping = $amountShipping;
+    }
+
+    public function setAmountTax(float $amountTax): void
+    {
+        $this->amountTax = Util::round($amountTax);
+    }
+
+    public function setAmountSurcharge(float $amountSurcharge): void
+    {
+        $this->amountSurcharge = Util::round($amountSurcharge);
+    }
+
+    public function setAmountSurchargeTax(float $amountSurchargeTax): void
+    {
+        $this->amountSurchargeTax = Util::round($amountSurchargeTax);
     }
 
     public function setTerminalId(int $terminalId): void
