@@ -20,6 +20,8 @@ class Transaction
     private $cardCvv = '';
     private $amountBase = 0;
     private $amountShipping = 0;
+    private $amountSurcharge = 0;
+    private $amountSurchargeTax = 0;
     private $amountTax = 0; // level 2
     private $amountFreight = 0; // level 3
     private $billingIdentifier = '';
@@ -123,6 +125,16 @@ class Transaction
     public function setAmountTax(float $amountTax): void
     {
         $this->amountTax = Util::round($amountTax);
+    }
+
+    public function setAmountSurcharge(float $amountSurcharge): void
+    {
+        $this->amountSurcharge = Util::round($amountSurcharge);
+    }
+
+    public function setAmountSurchargeTax(float $amountSurchargeTax): void
+    {
+        $this->amountSurchargeTax = Util::round($amountSurchargeTax);
     }
 
     public function setBillingIdentifier(string $billingIdentifier): void
@@ -255,6 +267,14 @@ class Transaction
             $data['amountBase'] = $this->amountBase;
             $data['amountShipping'] = $this->amountShipping;
             $data['amountTax'] = $this->amountTax;
+        }
+
+        if ($this->amountSurcharge) {
+            $data['amountSurcharge'] = $this->amountSurcharge;
+        }
+
+        if ($this->amountSurchargeTax) {
+            $data['amountSurchargeTax'] = $this->amountSurchargeTax;
         }
 
         $rest->post('transactions', $data);
