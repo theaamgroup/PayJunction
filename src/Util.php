@@ -18,7 +18,7 @@ class Util
 
     public static function round(float $num): string
     {
-        return number_format(round($num, 2), 2, '.', ',');
+        return number_format(round($num, 2), 2, '.', '');
     }
 
     public static function minmax(int $val, int $min, int $max = 2147483648): int
