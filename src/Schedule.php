@@ -17,7 +17,7 @@ class Schedule
     private $intervalCap = 0;
     private $startDate = '';
     private $specificDate1 = '';
-    private $bypassDuplicate = true;
+    private $bypassDuplicate = 'true';
 
     public function setVaultId(int $vaultId): void
     {
@@ -89,7 +89,7 @@ class Schedule
 
     public function setBypassDuplicate(bool $bypassDuplicate): void
     {
-        $this->bypassDuplicate = $bypassDuplicate;
+        $this->bypassDuplicate = $bypassDuplicate ? 'true' : 'false';
     }
 
     public function create(Rest $rest, Transaction $transaction): Rest
