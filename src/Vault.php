@@ -4,6 +4,7 @@ namespace AAM\PayJunction;
 
 class Vault
 {
+    private $transactionId = 0;
     private $tokenId = '';
     private $cardExpMonth = '';
     private $cardExpYear = '';
@@ -12,6 +13,11 @@ class Vault
     private $state = '';
     private $zip = '';
     private $addressId = 0;
+
+    public function setTransactionId(int $transactionId): void
+    {
+        $this->transactionId = $transactionId;
+    }
 
     public function setTokenId(string $tokenId): void
     {
