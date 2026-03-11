@@ -20,43 +20,66 @@ try {
     $billingZip = $_POST['billingZip'];
     $amount = (float) $_POST['amount'];
     $recurringAmount = (float) $_POST['recurringAmount'];
+    $verifyFirst = !empty($_POST['verifyFirst']);
 
     $rest = useRest();
 
-    if ($recurringAmount) {
-        // Create customer
-        $customer = new Customer();
-        $customer->setFirstName($firstName);
-        $customer->setLastName($lastName);
-        $rest = $customer->create($rest);
-        checkRestError($rest, 'Customer');
-        $customerId = (int) $rest->getResult('customerId');
+    // Create customer
+    $customer = new Customer();
+    $customer->setFirstName($firstName);
+    $customer->setLastName($lastName);
+    $rest = $customer->updateOrCreate($rest, $customer);
+    checkRestError($rest, 'Customer');
+    $customerId = (int) $rest->getResult('customerId');
 
-        // Create address
-        $address = new Address();
-        $address->setAddress($billingAddress);
-        $address->setCity($billingCity);
-        $address->setState($billingState);
-        $address->setCountry($billingCountry);
-        $address->setZip($billingZip);
-        $rest = $address->create($rest, $customerId);
-        checkRestError($rest, 'Address');
-        $addressId = (int) $rest->getResult('addressId');
+    // Create address
+    $address = new Address();
+    $address->setAddress($billingAddress);
+    $address->setCity($billingCity);
+    $address->setState($billingState);
+    $address->setCountry($billingCountry);
+    $address->setZip($billingZip);
+    $rest = $address->updateOrCreate($rest, $customerId, $address);
+    checkRestError($rest, 'Address');
+    $addressId = (int) $rest->getResult('addressId');
 
-        // Create vault
-        $vault = new Vault();
-        $vault->setAddressId($addressId);
-        $vault->setTokenId($tokenId);
-        $rest = $vault->create($rest, $customerId);
-        checkRestError($rest, 'Vault');
-        $vaultId = (int) $rest->getResult('vaultId');
+    // Create vault
+    $vault = new Vault();
+    $vault->setAddressId($addressId);
+    $vault->setTokenId($tokenId);
+    $rest = $vault->create($rest, $customerId);
+    checkRestError($rest, 'Vault');
+    $vaultId = (int) $rest->getResult('vaultId');
+
+    if ($verifyFirst) {
+        $transaction = new Transaction();
+        $transaction->setInvoiceNumber(time());
+
+        if (isset($vaultId)) {
+            $transaction->setVaultId($vaultId);
+        } else {
+            $transaction->setTokenId($tokenId);
+        }
+
+        $transaction->setTerminalId(Terminal::getTerminalId($rest, 'Labs Account', 'CARD'));
+        $transaction->setStatus('CAPTURE');
+        $transaction->setBillingFirstName($firstName);
+        $transaction->setBillingLastName($lastName);
+        $transaction->setAmountBase(0);
+        $transaction->setBillingAddress($address);
+        $transaction->setAvsCheck('ADDRESS_AND_ZIP');
+        $rest = $transaction->verify($rest);
+        checkRestError($rest, 'Transaction');
+        $transactionId = (int) $rest->getResult('transactionId');
     }
 
     // Create transaction
     $transaction = new Transaction();
     $transaction->setInvoiceNumber(time()); // bypass duplicate transaction blocking
 
-    if (isset($vaultId)) {
+    if (isset($transactionId)) {
+        $transaction->setTransactionId($transactionId);
+    } elseif (isset($vaultId)) {
         $transaction->setVaultId($vaultId);
     } else {
         $transaction->setTokenId($tokenId);

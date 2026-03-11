@@ -21,7 +21,8 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="cardNumber" name="cardNumber" value="4111111111111111">
+                                <input type="text" class="form-control" id="cardNumber" name="cardNumber"
+                                    value="4111111111111111">
                                 <label for="cardNumber" class="form-label">Card Number</label>
                             </div>
                         </div>
@@ -29,19 +30,22 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="cardExpMonth" name="cardExpMonth" min="1" max="12" value="1">
+                                <input type="number" class="form-control" id="cardExpMonth" name="cardExpMonth" min="1"
+                                    max="12" value="1">
                                 <label for="cardExpMonth" class="form-label">Exp Month</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="cardExpYear" name="cardExpYear" min="2022" max="2099" value="2029">
+                                <input type="number" class="form-control" id="cardExpYear" name="cardExpYear" min="2022"
+                                    max="2099" value="2029">
                                 <label for="cardExpYear" class="form-label">Exp Year</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="cardCvv" name="cardCvv" min="0" max="9999" value="999">
+                                <input type="number" class="form-control" id="cardCvv" name="cardCvv" min="0" max="9999"
+                                    value="999">
                                 <label for="cardCvv" class="form-label">CVV</label>
                             </div>
                         </div>
@@ -50,14 +54,27 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="amount" name="amount" value=".99" step=".01">
+                                <input type="number" class="form-control" id="amount" name="amount" value=".99"
+                                    step=".01">
                                 <label for="amount" class="form-label">Amount</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="recurringAmount" name="recurringAmount" value="0" step=".01">
+                                <input type="number" class="form-control" id="recurringAmount" name="recurringAmount"
+                                    value="0" step=".01">
                                 <label for="recurringAmount" class="form-label">Recurring Amount</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="1" id="verifyFirst"
+                                    name="verifyFirst">
+                                <label class="form-check-label" for="verifyFirst">
+                                    Run transaction with Verify ($0) action first?
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -80,13 +97,15 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="billingAddress" name="billingAddress" value="1903 Test St.">
+                                <input type="text" class="form-control" id="billingAddress" name="billingAddress"
+                                    value="1903 Test St.">
                                 <label for="billingAddress" class="form-label">Billing Address</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="billingCity" name="billingCity" value="Santa Barbara">
+                                <input type="text" class="form-control" id="billingCity" name="billingCity"
+                                    value="Santa Barbara">
                                 <label for="billingCity" class="form-label">Billing City</label>
                             </div>
                         </div>
@@ -94,7 +113,8 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="billingState" name="billingState" value="CA">
+                                <input type="text" class="form-control" id="billingState" name="billingState"
+                                    value="CA">
                                 <label for="billingState" class="form-label">Billing State</label>
                             </div>
                         </div>
@@ -106,7 +126,8 @@
                         </div>
                         <div class="col">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="billingCountry" name="billingCountry" value="US">
+                                <input type="text" class="form-control" id="billingCountry" name="billingCountry"
+                                    value="US">
                                 <label for="billingCountry" class="form-label">Billing Country</label>
                             </div>
                         </div>
@@ -123,7 +144,7 @@
         const clearErrors = () => {
             errorAlert.innerHTML = '';
         }
-        
+
         const renderErrors = (errors) => {
             let messages = [];
 
@@ -147,7 +168,7 @@
 
         const payJunction = PayJunction('key_fTGobncQIUqb_E2DsbCSTy1Cuw9O8P3Ra1JLZ1nTirOxHU42YchuhQg730DSs2_4iaptJwXvKWwyQG1zb_JhKQ');
 
-        document.querySelector('#checkoutForm').addEventListener('submit', function(event) {
+        document.querySelector('#checkoutForm').addEventListener('submit', function (event) {
             event.preventDefault();
             clearErrors();
 
@@ -159,9 +180,17 @@
             };
 
             payJunction.createToken(cardPaymentInformation)
-                .then(function(result) {
+                .then(function (result) {
                     if (result.tokenId) {
                         const formData = new FormData();
+                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+                        checkboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                formData.append(checkbox.name, checkbox.value);
+                            }
+                        });
+
                         formData.append('tokenId', result.tokenId);
                         formData.append('amount', document.querySelector('[name=amount]').value);
                         formData.append('recurringAmount', document.querySelector('[name=recurringAmount]').value);
@@ -176,9 +205,9 @@
                         fetch('/checkout.php', {
                             method: 'POST',
                             body: formData
-                        }).then(function(result) {
+                        }).then(function (result) {
                             return result.json()
-                                .then(function(res) {
+                                .then(function (res) {
                                     if (res.transactionId) {
                                         alert(`Transaction complete: ${res.transactionId}`);
                                     } else if (res.scheduleId) {
@@ -191,7 +220,7 @@
                     }
 
                     if (result.errors) {
-                        const formattedErrors = result.errors.map(function(error) {
+                        const formattedErrors = result.errors.map(function (error) {
                             return `${error.parameter}: ${error.message}`;
                         });
 
