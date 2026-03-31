@@ -157,7 +157,6 @@ class Rest
         $this->curl_error = curl_error($ch);
         $this->curl_status_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $this->result = json_decode($response, true);
-        curl_close($ch);
         $errors = $this->result['errors'] ?? [];
         $bad_status = !in_array($this->curl_status_code, [200, 204]);
 
